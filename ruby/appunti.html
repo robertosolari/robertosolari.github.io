@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Appunti Ruby</title>
+</head>
+<body>
+
+Commenti:
+<pre><code>
+# commento su una linea
+
+=begin
+commento su più
+linee
+=end
+</code></pre>
+
+Booleani
+
+Oltre ai classici true e false, nil. Al contrario del c/c++ dove se si utilizza void come return type di una funzione
+quella funzione non ritorna un valore, in Ruby ogni cosa ritorna un valore, se una funzione non ritorna nulla,
+il valore di ritorno sarà nil.
+
+Numeri:
+
+Per le operazioni comuni (+, -, *, / e %) è uguale ad altri linguaggi. Per il calcolo dell'esponente è uguale a python:
+
+<pre><code>
+# esponente
+2 ** 2  #=> 4
+3 ** 4  #=> 81
+</code></pre>
+
+Due tipi di numeri Integer e Float. La divisione fra due interi sarà sempre un intero
+<pre><code>
+18 / 4  # sarà 4, non 4.5
+</code></pre>
+Per ottenere il numero a virgola mobile è sufficiente impostare un numero come float
+
+18 / 4.0  # sarà 4.5, non 4
+Ruby è un linguaggio fortemente OOP, ogni cosa in Ruby è un oggetto, inclusi i tipi di dato. Di conseguenza per convertire un numero da int a float, o viceversa, è sufficiente chiamare i seguenti metodi:
+
+# Da int a float:
+13.to_f   #  13.0
+
+# da float a int:
+13.0.to_i #=> 13
+13.9.to_i #=> 13, importante!!! convertendo un numero da decimale a int, la parte decimale viene brutalmente eliminata, non viene presa in considereazione per un eventuale arrotondamento, in questo caso il 13.9 non diventa un 14!
+Altri metodi sui numeri:
+
+#even?  intuitivo, così come il suo opposto odd?
+
+4.even? #true
+5.odd? #true
+
+4.odd? #false
+5.even? #false
+Stringhe
+
+le stringhe possono essere formattate sia con le classiche virgolette " " sia con i singoli apici ' '.
+
+string interpolation e escape character funzionano solo su stringhe con doppi apici " " . La concatenazione può essere effettuata in più modi:
+
+# classico +
+"Hello " + "World!"    # "Hello World!"
+
+# con << (shovel operator)
+"Hello " << "World!"   # "Hello World!"
+
+# con il metodo concat:
+"Hello ".concat("World!") # "Hello World!"
+Stessa cosa per quanto riguarda le sottostringhe (la sintassi di un linguaggio non è, quasi, mai il problema del suo apprendimento), simile al python:
+
+"hello"[0]      # "h"
+
+"hello"[0..1]   # "he"
+
+"hello"[0, 4]   # "hell"
+
+"hello"[-1]     # "o"
+Interpolation anche qui grosso modo come python o javascript, permette di usare una variabile come placeholder, utile se la si usa in diversi punti e non si vuole cambiare la stringa 6mila volta, come scritto sopra funziona solo con i doppi apici " ":
+
+txt = "World!"
+
+puts "Hello, #{txt}" #=> "Hello, World!"
+puts 'Hello, #{txt}' #=> "Hello, #{txt}"
+Metodi utili
+
+
+"hello".capitalize # "Hello"
+
+"hello".include?("lo")  # true
+
+"hello".include?("z")   # false
+
+"hello".upcase  # "HELLO"
+
+#conversione oggetti in stringhe:
+
+5.to_s    # "5"
+
+nil.to_s  # ""
+
+
+ecc... vedere doc per altri metodi
+
+</body>
+</html>
