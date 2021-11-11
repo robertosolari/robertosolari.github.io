@@ -38,17 +38,23 @@ Due tipi di numeri Integer e Float. La divisione fra due interi sarà sempre un 
 </code></pre>
 Per ottenere il numero a virgola mobile è sufficiente impostare un numero come float
 
+<pre><code>
 18 / 4.0  # sarà 4.5, non 4
-Ruby è un linguaggio fortemente OOP, ogni cosa in Ruby è un oggetto, inclusi i tipi di dato. Di conseguenza per convertire un numero da int a float, o viceversa, è sufficiente chiamare i seguenti metodi:
+</code></pre>
+Ruby è un linguaggio fortemente OOP, ogni cosa in Ruby è un oggetto, inclusi i tipi di dato.
+Di conseguenza per convertire un numero da int a float, o viceversa, è sufficiente chiamare i seguenti metodi:
 
+<pre><code>
 # Da int a float:
 13.to_f   #  13.0
 
 # da float a int:
 13.0.to_i #=> 13
 13.9.to_i #=> 13, importante!!! convertendo un numero da decimale a int, la parte decimale viene brutalmente eliminata, non viene presa in considereazione per un eventuale arrotondamento, in questo caso il 13.9 non diventa un 14!
-Altri metodi sui numeri:
+</code></pre>
 
+Altri metodi sui numeri:
+<pre><code>
 #even?  intuitivo, così come il suo opposto odd?
 
 4.even? #true
@@ -56,12 +62,16 @@ Altri metodi sui numeri:
 
 4.odd? #false
 5.even? #false
+</code></pre>
+
 Stringhe
 
 le stringhe possono essere formattate sia con le classiche virgolette " " sia con i singoli apici ' '.
 
-string interpolation e escape character funzionano solo su stringhe con doppi apici " " . La concatenazione può essere effettuata in più modi:
+string interpolation e escape character funzionano solo su stringhe con doppi apici " " .
+La concatenazione può essere effettuata in più modi:
 
+<pre><code>
 # classico +
 "Hello " + "World!"    # "Hello World!"
 
