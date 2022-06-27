@@ -1,0 +1,31 @@
+h1,h2,h3,p{
+	font-family: 'Roboto', sans-serif;
+}
+/*
+h1{
+	color: #5F7161;
+}*/
+body{
+	background-color: #eeedeb;
+}
+
+h1,h2,h3,strong{
+	color: #A27B5C;
+}
+
+.nav-link {
+	color: #A27B5C;
+}
+
+.nav-link:hover{
+	color: #A27B5C;
+}
+
+p{
+	color: #2C3639;
+}
+
+.box{
+	background-color: #EFEAD8;
+}
+	
