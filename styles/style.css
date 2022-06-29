@@ -28,4 +28,7 @@ p{
 .box{
 	background-color: #EFEAD8;
 }
-	
+
+.fit-content{
+	display: inline-flex;
+}
