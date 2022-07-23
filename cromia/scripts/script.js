@@ -56,6 +56,11 @@ function draw(){
                 clearAndDraw();
             }
         });
+        circle.on("touchend",function(){
+            if (this.fill() == "#"+randomColorDiff){
+                clearAndDraw();
+            }
+        });
     }
     
     // add the shape to the layer
