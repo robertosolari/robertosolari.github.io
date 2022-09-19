@@ -4,12 +4,20 @@
     </head>
     <body>
         <div>
-            In molti linguaggi di programmazione, Java è uno di questi, ci sono due tipi di verifica dell'uguaglianza:
+            In molti linguaggi di programmazione, il Java è uno di questi, ci sono due tipi di verifica dell'uguaglianza:
             <ul>
                 <li>uguaglianza di riferimento</li>
                 <li>uguaglianza di valore</li>
             </ul>
+            L'uguaglianza per riferimento controlla se i due oggetti sono lo stesso oggetto in memoria
+            (ovvero occupano lo stesso spazio nella memoria). In java l'operatore per questo controllo è ==
+
+            L'uguaglianza per valore invece controlla se due oggetti sono uguali sulla base di specifici use case e design dell'utente.
+            in java è possibile controllare l'uguaglianza per valore tramite il metodo equals() (ereditato da tutti gli oggetti a partire da Object).
+            l'implementazione di default di questo metodo controlla l'uguaglianza per riferimento, ma è possibile sovrascriverlo per controllare l'uguaglianza per valore.
+            Quindi senza override a.equals(b) è uguale a a == b.
             
+
         </div>
     </body>
 </html>
