@@ -15,7 +15,7 @@
       document.body.appendChild( renderer.domElement );
 
       var loader = new THREE.OBJLoader();
-      loader.load( 'model.obj', function ( object ) {
+      loader.load( 'https://github.com/robertosolari/FollowISS/blob/main/VisualISS/assets/ISS_stationary.glb', function ( object ) {
         scene.add( object );
       }, undefined, function ( error ) {
         console.error( error );
