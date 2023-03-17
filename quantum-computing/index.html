@@ -26,16 +26,37 @@
   <body>
     <h1>Accelerometer Data</h1>
     <p id="acceleration-data">X: 0.00, Y: 0.00, Z: 0.00</p>
+    <button id="toggle-button" onclick="toggleUpdates()">Stop Updates</button>
 
     <script>
+      var updatesEnabled = true;
+      var lastAcceleration;
+
       window.addEventListener("devicemotion", handleMotion, true);
 
       function handleMotion(event) {
-        var acceleration = event.accelerationIncludingGravity;
-        var x = acceleration.x.toFixed(2);
-        var y = acceleration.y.toFixed(2);
-        var z = acceleration.z.toFixed(2);
-        document.getElementById("acceleration-data").innerHTML = "X: " + x + ", Y: " + y + ", Z: " + z;
+        lastAcceleration = event.accelerationIncludingGravity;
+        updateAcceleration();
+      }
+
+      function updateAcceleration() {
+        if (updatesEnabled) {
+          var x = lastAcceleration.x.toFixed(2);
+          var y = lastAcceleration.y.toFixed(2);
+          var z = lastAcceleration.z.toFixed(2);
+          document.getElementById("acceleration-data").innerHTML = "X: " + x + ", Y: " + y + ", Z: " + z;
+        }
+      }
+
+      function toggleUpdates() {
+        updatesEnabled = !updatesEnabled;
+        var button = document.getElementById("toggle-button");
+        if (updatesEnabled) {
+          button.innerHTML = "Stop Updates";
+          updateAcceleration();
+        } else {
+          button.innerHTML = "Restart Updates";
+        }
       }
     </script>
   </body>
