@@ -12,7 +12,30 @@
 
   <button onclick="processCSVFiles()">Process CSV</button>
 
+  <h2>Associated Farms and Weather Stations</h2>
+  <table id="associationTable" border="1">
+    <tr>
+      <th>Company ID</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Weather Station ID</th>
+      <th>Weather Station Type</th>
+    </tr>
+  </table>
+  
   <script>
+    function createAssociationTable(associations) {
+      const table = document.getElementById('associationTable');
+
+      for (const association of associations) {
+        const row = table.insertRow();
+        row.insertCell().textContent = association.farm.companyId;
+        row.insertCell().textContent = association.farm.lat;
+        row.insertCell().textContent = association.farm.lng;
+        row.insertCell().textContent = association.weatherStation.ID;
+        row.insertCell().textContent = association.weatherStation.type;
+      }
+    }
     // Function to parse the Weather Station CSV
     function parseWeatherStationCSV(csvData) {
       const lines = csvData.split('\n');
@@ -90,6 +113,7 @@
           const farms = parseFarmCSV(farmCSVData);
 
           const farmsWithin10Km = checkFarmsProximityToWeatherStations(farms, weatherStations);
+          createAssociationTable(farmsWithin10Km);
           console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
         };
         farmReader.readAsText(farmFile);
