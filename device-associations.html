@@ -113,7 +113,7 @@
           const farms = parseFarmCSV(farmCSVData);
 
           const farmsWithin10Km = checkFarmsProximityToWeatherStations(farms, weatherStations);
-          //createAssociationTable(farmsWithin10Km);
+          createAssociationTable(farmsWithin10Km);
           console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
         };
         farmReader.readAsText(farmFile);
@@ -140,7 +140,7 @@
     }
 
     // Function to iterate over all the farms and check their proximity to weather stations
-    function checkFarmsProximityToWeatherStations(farms, weatherStations) {
+    /*function checkFarmsProximityToWeatherStations(farms, weatherStations) {
       const farmsWithin10Km = [];
 
       for (const farm of farms) {
@@ -150,7 +150,39 @@
       }
 
       return farmsWithin10Km;
+    }*/
+
+    function checkFarmsProximityToWeatherStations(farms, weatherStations) {
+      const associations = [];
+
+      for (const farm of farms) {
+        for (const station of weatherStations) {
+          const farmLat = parseFloat(farm.lat);
+          const farmLng = parseFloat(farm.lng);
+          const stationLat = parseFloat(station.Latitudine);
+          const stationLng = parseFloat(station.Longitudine);
+          const distance = calculateDistance(farmLat, farmLng, stationLat, stationLng);
+
+          if (distance <= 10) {
+            associations.push({
+              farm: {
+                companyId: farm.companyId,
+                lat: farm.lat,
+                lng: farm.lng,
+              },
+              weatherStation: {
+                ID: station.ID,
+                type: station.type,
+              },
+            });
+            break; // Found an association, no need to check other weather stations
+          }
+        }
+      }
+
+      return associations;
     }
+    
   </script>
 </body>
 </html>
