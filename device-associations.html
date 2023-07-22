@@ -110,7 +110,9 @@
     function processCSVFiles() {
       const weatherStationFileInput = document.getElementById('weatherStationFileInput');
       const farmFileInput = document.getElementById('farmFileInput');
-
+      let farmsTmp = []
+      let weatherStationsTmp = []
+      
       const weatherStationFile = weatherStationFileInput.files[0];
       const farmFile = farmFileInput.files[0];
 
@@ -123,7 +125,7 @@
       weatherStationReader.onload = function(event) {
         const weatherStationCSVData = event.target.result;
         const weatherStations = parseWeatherStationCSV(weatherStationCSVData);
-
+        weatherStationsTmp = weatherStations
         // You can do something with the weather station data here
         console.log('Weather Stations:', weatherStations);
       };
@@ -133,13 +135,13 @@
       farmReader.onload = function(event) {
         const farmCSVData = event.target.result;
         const farms = parseFarmCSV(farmCSVData);
-        
-        const farmsWithin10Km = checkFarmsProximityToWeatherStations(farms, weatherStations);
-        console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
+        farmsTmp = farms
         // You can do something with the farm data here
         console.log('Farms:', farms);
       };
       farmReader.readAsText(farmFile);
+      const farmsWithin10Km = checkFarmsProximityToWeatherStations(farmsTmp, weatherStationsTmp);
+      console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
     }
   </script>
 </body>
