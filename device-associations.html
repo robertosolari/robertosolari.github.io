@@ -13,60 +13,6 @@
   <button onclick="processCSVFiles()">Process CSV</button>
 
   <script>
-    // Function to parse the Weather Station CSV...
-    // (Code for parsing Weather Station CSV remains the same)
-
-    // Function to parse the Farm CSV...
-    // (Code for parsing Farm CSV remains the same)
-
-    // Function to calculate the distance between two sets of coordinates using the Haversine formula
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; // Radius of the Earth in km
-      const dLat = (lat2 - lat1) * (Math.PI / 180);
-      const dLon = (lon2 - lon1) * (Math.PI / 180);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distance = R * c;
-      return distance;
-    }
-
-    // Function to handle file input and process the CSV files...
-    // (Code for processing CSV files remains the same)
-
-    // Function to check if a farm is within 10 km of any weather station
-    function checkFarmProximity(farm, weatherStations) {
-      const farmLat = parseFloat(farm.lat);
-      const farmLng = parseFloat(farm.lng);
-
-      for (const station of weatherStations) {
-        const stationLat = parseFloat(station.Latitudine);
-        const stationLng = parseFloat(station.Longitudine);
-        const distance = calculateDistance(farmLat, farmLng, stationLat, stationLng);
-
-        if (distance <= 10) {
-          return true; // Farm is within 10 km of at least one weather station
-        }
-      }
-
-      return false; // Farm is not within 10 km of any weather station
-    }
-
-    // Function to iterate over all the farms and check their proximity to weather stations
-    function checkFarmsProximityToWeatherStations(farms, weatherStations) {
-      const farmsWithin10Km = [];
-
-      for (const farm of farms) {
-        if (checkFarmProximity(farm, weatherStations)) {
-          farmsWithin10Km.push(farm);
-        }
-      }
-
-      return farmsWithin10Km;
-    }
-    
     // Function to parse the Weather Station CSV
     function parseWeatherStationCSV(csvData) {
       const lines = csvData.split('\n');
@@ -106,13 +52,25 @@
       return farms;
     }
 
+    // Function to calculate the distance between two sets of coordinates using the Haversine formula
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radius of the Earth in km
+      const dLat = (lat2 - lat1) * (Math.PI / 180);
+      const dLon = (lon2 - lon1) * (Math.PI / 180);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      return distance;
+    }
+
     // Function to handle file input and process the CSV files
     function processCSVFiles() {
       const weatherStationFileInput = document.getElementById('weatherStationFileInput');
       const farmFileInput = document.getElementById('farmFileInput');
-      let farmsTmp = []
-      let weatherStationsTmp = []
-      
+
       const weatherStationFile = weatherStationFileInput.files[0];
       const farmFile = farmFileInput.files[0];
 
@@ -125,23 +83,49 @@
       weatherStationReader.onload = function(event) {
         const weatherStationCSVData = event.target.result;
         const weatherStations = parseWeatherStationCSV(weatherStationCSVData);
-        weatherStationsTmp = weatherStations
-        // You can do something with the weather station data here
-        console.log('Weather Stations:', weatherStations);
+
+        const farmReader = new FileReader();
+        farmReader.onload = function(event) {
+          const farmCSVData = event.target.result;
+          const farms = parseFarmCSV(farmCSVData);
+
+          const farmsWithin10Km = checkFarmsProximityToWeatherStations(farms, weatherStations);
+          console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
+        };
+        farmReader.readAsText(farmFile);
       };
       weatherStationReader.readAsText(weatherStationFile);
+    }
 
-      const farmReader = new FileReader();
-      farmReader.onload = function(event) {
-        const farmCSVData = event.target.result;
-        const farms = parseFarmCSV(farmCSVData);
-        farmsTmp = farms
-        // You can do something with the farm data here
-        console.log('Farms:', farms);
-      };
-      farmReader.readAsText(farmFile);
-      const farmsWithin10Km = checkFarmsProximityToWeatherStations(farmsTmp, weatherStationsTmp);
-      console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
+    // Function to check if a farm is within 10 km of any weather station
+    function checkFarmProximity(farm, weatherStations) {
+      const farmLat = parseFloat(farm.lat);
+      const farmLng = parseFloat(farm.lng);
+
+      for (const station of weatherStations) {
+        const stationLat = parseFloat(station.Latitudine);
+        const stationLng = parseFloat(station.Longitudine);
+        const distance = calculateDistance(farmLat, farmLng, stationLat, stationLng);
+
+        if (distance <= 10) {
+          return true; // Farm is within 10 km of at least one weather station
+        }
+      }
+
+      return false; // Farm is not within 10 km of any weather station
+    }
+
+    // Function to iterate over all the farms and check their proximity to weather stations
+    function checkFarmsProximityToWeatherStations(farms, weatherStations) {
+      const farmsWithin10Km = [];
+
+      for (const farm of farms) {
+        if (checkFarmProximity(farm, weatherStations)) {
+          farmsWithin10Km.push(farm);
+        }
+      }
+
+      return farmsWithin10Km;
     }
   </script>
 </body>
