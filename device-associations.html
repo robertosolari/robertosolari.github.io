@@ -113,7 +113,7 @@
           const farms = parseFarmCSV(farmCSVData);
 
           const farmsWithin10Km = checkFarmsProximityToWeatherStations(farms, weatherStations);
-          createAssociationTable(farmsWithin10Km);
+          //createAssociationTable(farmsWithin10Km);
           console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
         };
         farmReader.readAsText(farmFile);
