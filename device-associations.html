@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CSV Upload Page</title>
+</head>
+<body>
+  <h1>Upload Weather Station CSV</h1>
+  <input type="file" id="weatherStationFileInput" accept=".csv">
+
+  <h1>Upload Farm CSV</h1>
+  <input type="file" id="farmFileInput" accept=".csv">
+
+  <button onclick="processCSVFiles()">Process CSV</button>
+
+  <script>
+    // Function to parse the Weather Station CSV
+    function parseWeatherStationCSV(csvData) {
+      const lines = csvData.split('\n');
+      const weatherStations = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const [Nome, ID, GatewayID, Latitudine, Longitudine, type] = lines[i].split(';');
+        weatherStations.push({
+          Nome,
+          ID,
+          GatewayID,
+          Latitudine,
+          Longitudine,
+          type
+        });
+      }
+
+      return weatherStations;
+    }
+
+    // Function to parse the Farm CSV
+    function parseFarmCSV(csvData) {
+      const lines = csvData.split('\n');
+      const farms = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const [_id, companyId, lat, lng, type] = lines[i].split(';');
+        farms.push({
+          _id,
+          companyId,
+          lat,
+          lng,
+          type
+        });
+      }
+
+      return farms;
+    }
+
+    // Function to handle file input and process the CSV files
+    function processCSVFiles() {
+      const weatherStationFileInput = document.getElementById('weatherStationFileInput');
+      const farmFileInput = document.getElementById('farmFileInput');
+
+      const weatherStationFile = weatherStationFileInput.files[0];
+      const farmFile = farmFileInput.files[0];
+
+      if (!weatherStationFile || !farmFile) {
+        alert('Please select both CSV files before processing.');
+        return;
+      }
+
+      const weatherStationReader = new FileReader();
+      weatherStationReader.onload = function(event) {
+        const weatherStationCSVData = event.target.result;
+        const weatherStations = parseWeatherStationCSV(weatherStationCSVData);
+
+        // You can do something with the weather station data here
+        console.log('Weather Stations:', weatherStations);
+      };
+      weatherStationReader.readAsText(weatherStationFile);
+
+      const farmReader = new FileReader();
+      farmReader.onload = function(event) {
+        const farmCSVData = event.target.result;
+        const farms = parseFarmCSV(farmCSVData);
+
+        // You can do something with the farm data here
+        console.log('Farms:', farms);
+      };
+      farmReader.readAsText(farmFile);
+    }
+  </script>
+</body>
+</html>
