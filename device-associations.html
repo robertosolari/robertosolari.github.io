@@ -73,7 +73,7 @@
         row.insertCell().textContent = association.weatherStation.ID;
         row.insertCell().textContent = association.weatherStation.type;
         */
-        row.insertCell().textContent = association.weatherStation.ID;
+        row.insertCell().textContent = association.weatherStation.code;
         row.insertCell().textContent = association.farm.companyId;
         row.insertCell().textContent = association.weatherStation.type;
         row.insertCell().textContent = association.weatherStation.description;
@@ -88,6 +88,7 @@
       const weatherStations = [];
 
       for (let i = 1; i < lines.length; i++) {
+        /*
         const [Nome, ID, GatewayID, Latitudine, Longitudine, type] = lines[i].split(';');
         weatherStations.push({
           Nome,
@@ -98,6 +99,16 @@
           type,
           deviceTypee,
           description
+        });*/
+        //description;code;lat;lng;deviceType;deviceTypee
+        const [description, code, lat, lng, deviceType, deviceTypee] = lines[i].split(';');
+        weatherStations.push({
+          description,
+          code,
+          lat,
+          lng,
+          deviceType,
+          deviceTypee
         });
       }
 
@@ -183,8 +194,8 @@
       const farmLng = parseFloat(farm.lng);
 
       for (const station of weatherStations) {
-        const stationLat = parseFloat(station.Latitudine);
-        const stationLng = parseFloat(station.Longitudine);
+        const stationLat = parseFloat(station.lat);
+        const stationLng = parseFloat(station.lng);
         const distance = calculateDistance(farmLat, farmLng, stationLat, stationLng);
 
         if (distance <= 10) {
@@ -215,8 +226,8 @@
         for (const station of weatherStations) {
           const farmLat = parseFloat(farm.lat);
           const farmLng = parseFloat(farm.lng);
-          const stationLat = parseFloat(station.Latitudine);
-          const stationLng = parseFloat(station.Longitudine);
+          const stationLat = parseFloat(station.lat);
+          const stationLng = parseFloat(station.lng);
           const distance = calculateDistance(farmLat, farmLng, stationLat, stationLng);
 
           if (distance <= proximityThreshold) {
@@ -227,7 +238,7 @@
                 lng: farm.lng,
               },
               weatherStation: {
-                ID: station.ID,
+                code: station.code,
                 type: station.type,
                 deviceTypee: station.deviceTypee,
                 description: station.description,
