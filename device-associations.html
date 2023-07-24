@@ -40,7 +40,7 @@
         for (const cell of cells) {
           rowData.push(cell.textContent);
         }
-        csvContent += rowData.join(',') + '\n';
+        csvContent += rowData.join(';') + '\n';
       }
 
       const encodedURI = encodeURI(csvContent);
