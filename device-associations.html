@@ -77,7 +77,7 @@
         */
         row.insertCell().textContent = association.weatherStation.code;
         row.insertCell().textContent = association.farm.companyId;
-        row.insertCell().textContent = association.weatherStation.type;
+        row.insertCell().textContent = association.weatherStation.deviceType;
         row.insertCell().textContent = association.weatherStation.description;
         row.insertCell().textContent = association.farm.lat;
         row.insertCell().textContent = association.farm.lng;
@@ -241,7 +241,7 @@
               },
               weatherStation: {
                 code: station.code,
-                type: station.type,
+                deviceType: station.deviceType,
                 deviceTypee: station.deviceTypee,
                 description: station.description,
               },
