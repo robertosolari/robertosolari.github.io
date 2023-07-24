@@ -6,10 +6,12 @@
 <body>
   <h1>Upload Weather Station CSV</h1>
   <input type="file" id="weatherStationFileInput" accept=".csv">
-
+  <p id="weatherStationHeaders"></p>
+  
   <h1>Upload Farm CSV</h1>
   <input type="file" id="farmFileInput" accept=".csv">
-
+  <p id="farmHeaders"></p>
+  
   <h3>Enter Proximity Threshold (km):</h3>
   <input type="number" id="proximityThreshold" value="10">
 
@@ -251,6 +253,28 @@
 
       return associations;
     }
+
+    function readCSVHeaders(fileInput, headerElement) {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const csvData = event.target.result;
+        const lines = csvData.split('\n');
+        const headers = lines[0].split(';').join(', '); // Assuming headers are semicolon-separated
+        headerElement.textContent = `Headers: ${headers}`;
+      };
+      reader.readAsText(file);
+    }
+
+    weatherStationFileInput.addEventListener('change', function() {
+      readCSVHeaders(weatherStationFileInput, weatherStationHeaders);
+    });
+
+    farmFileInput.addEventListener('change', function() {
+      readCSVHeaders(farmFileInput, farmHeaders);
+    });
     
   </script>
 </body>
