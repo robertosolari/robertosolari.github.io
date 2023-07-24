@@ -10,6 +10,9 @@
   <h1>Upload Farm CSV</h1>
   <input type="file" id="farmFileInput" accept=".csv">
 
+  <h3>Enter Proximity Threshold (km):</h3>
+  <input type="number" id="proximityThreshold" value="10">
+
   <button onclick="processCSVFiles()">Process CSV</button>
 
   <h2>Associated Farms and Weather Stations</h2>
@@ -91,6 +94,7 @@
 
     // Function to handle file input and process the CSV files
     function processCSVFiles() {
+      const proximityThreshold = parseFloat(document.getElementById('proximityThreshold').value);
       const weatherStationFileInput = document.getElementById('weatherStationFileInput');
       const farmFileInput = document.getElementById('farmFileInput');
 
@@ -112,7 +116,7 @@
           const farmCSVData = event.target.result;
           const farms = parseFarmCSV(farmCSVData);
 
-          const farmsWithin10Km = checkFarmsProximityToWeatherStations(farms, weatherStations);
+          const farmsWithin10Km = checkFarmsProximityToWeatherStations(farms, weatherStations, proximityThreshold);
           createAssociationTable(farmsWithin10Km);
           console.log('Farms within 10 km of a weather station:', farmsWithin10Km);
         };
@@ -152,7 +156,7 @@
       return farmsWithin10Km;
     }*/
 
-    function checkFarmsProximityToWeatherStations(farms, weatherStations) {
+    function checkFarmsProximityToWeatherStations(farms, weatherStations, proximityThreshold) {
       const associations = [];
 
       for (const farm of farms) {
@@ -163,7 +167,7 @@
           const stationLng = parseFloat(station.Longitudine);
           const distance = calculateDistance(farmLat, farmLng, stationLat, stationLng);
 
-          if (distance <= 10) {
+          if (distance <= proximityThreshold) {
             associations.push({
               farm: {
                 companyId: farm.companyId,
