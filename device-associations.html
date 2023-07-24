@@ -14,7 +14,8 @@
   <input type="number" id="proximityThreshold" value="10">
 
   <button onclick="processCSVFiles()">Process CSV</button>
-
+  <button onclick="clearTable()">Clear Table</button>
+  
   <h2>Associated Farms and Weather Stations</h2>
   <table id="associationTable" border="1">
     <tr>
@@ -57,6 +58,13 @@
       }
 
       return weatherStations;
+    }
+
+    function clearTable() {
+      const table = document.getElementById('associationTable');
+      while (table.rows.length > 1) {
+        table.deleteRow(1);
+      }
     }
 
     // Function to parse the Farm CSV
