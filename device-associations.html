@@ -19,12 +19,22 @@
   
   <h2>Associated Farms and Weather Stations</h2>
   <table id="associationTable" border="1">
-    <tr>
+    <!--<tr>
       <th>Company ID</th>
       <th>Latitude</th>
       <th>Longitude</th>
       <th>Weather Station ID</th>
       <th>Weather Station Type</th>
+      <th>deviceTypee </th>
+    </tr>-->
+    <tr>
+      <th>code</th>
+      <th>companyId</th>
+      <th>deviceType</th>
+      <th>description</th>
+      <th>lat</th>
+      <th>lng</th>
+      <th>deviceTypee</th>
     </tr>
   </table>
   
@@ -56,11 +66,20 @@
 
       for (const association of associations) {
         const row = table.insertRow();
+        /*
         row.insertCell().textContent = association.farm.companyId;
         row.insertCell().textContent = association.farm.lat;
         row.insertCell().textContent = association.farm.lng;
         row.insertCell().textContent = association.weatherStation.ID;
         row.insertCell().textContent = association.weatherStation.type;
+        */
+        row.insertCell().textContent = association.weatherStation.ID;
+        row.insertCell().textContent = association.farm.companyId;
+        row.insertCell().textContent = association.weatherStation.type;
+        row.insertCell().textContent = association.weatherStation.description;
+        row.insertCell().textContent = association.farm.lat;
+        row.insertCell().textContent = association.farm.lng;
+        row.insertCell().textContent = association.weatherStation.deviceTypee;  
       }
     }
     // Function to parse the Weather Station CSV
@@ -76,7 +95,9 @@
           GatewayID,
           Latitudine,
           Longitudine,
-          type
+          type,
+          deviceTypee,
+          description
         });
       }
 
@@ -208,6 +229,8 @@
               weatherStation: {
                 ID: station.ID,
                 type: station.type,
+                deviceTypee: station.deviceTypee,
+                description: station.description,
               },
             });
             break; // Found an association, no need to check other weather stations
