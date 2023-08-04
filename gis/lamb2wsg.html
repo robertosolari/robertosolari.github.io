@@ -70,13 +70,14 @@
         const rows = content.split('\n');
 
         // Output CSV header with the new columns
-        const output = 'Nom parcelle;Surface;Cod. farm;Farm Name;Structure;Num_Ilot;Culture;Variete;Nom contrat;WKT;EPSG:27572 To WSG84;EPSG:27582 To WSG84\n';
+        const output = 'Cod. farm;WKT;EPSG:27572 To WSG84;EPSG:27582 To WSG84\n';
 
         for (let i = 1; i < rows.length; i++) {
           const row = rows[i].trim();
           if (row) {
             const columns = row.split(';');
-            const wkt = columns[columns.length - 1].replace('POLYGON((', '').replace('))', '');
+            const codFarm = columns[0];
+            const wkt = columns[1].replace('POLYGON((', '').replace('))', '');
             if (wkt) {
               const coordinates = wkt.split(',').map(coord => coord.trim().split(' ').map(parseFloat));
 
@@ -96,7 +97,7 @@
               convertedCoordinates_27582 = convertedCoordinates_27582.slice(0, -1);
 
               // Append the converted coordinates to the output
-              output += `${row};${convertedCoordinates_27572};${convertedCoordinates_27582}\n`;
+              output += `${codFarm};${row};${convertedCoordinates_27572};${convertedCoordinates_27582}\n`;
             }
           }
         }
