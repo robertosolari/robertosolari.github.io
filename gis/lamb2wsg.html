@@ -1,57 +1,119 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    
-  </head>
-  <body>
-    <script>
-        Math.tanh = Math.tanh || function(x) {
-      if(x === Infinity) {
-          return 1;
-      } else if(x === -Infinity) {
-          return -1;
-      } else {
-          return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
-      }
-  };
-  
-  Math.atanh = Math.atanh || function(x) {
-      return Math.log((1+x)/(1-x)) / 2;
-  };
-  
-  function lambert93toWGPS(lambertE, lambertN) {
-  
-      var constantes = {
-          GRS80E: 0.081819191042816,
-          LONG_0: 3,
-          XS: 700000,
-          YS: 12655612.0499,
-          n: 0.7256077650532670,
-          C: 11754255.4261
-      }
-  
-      var delX = lambertE - constantes.XS;
-      var delY = lambertN - constantes.YS;
-      var gamma = Math.atan(-delX / delY);
-      var R = Math.sqrt(delX * delX + delY * delY);
-      var latiso = Math.log(constantes.C / R) / constantes.n;
-      var sinPhiit0 = Math.tanh(latiso + constantes.GRS80E * Math.atanh(constantes.GRS80E * Math.sin(1)));
-      var sinPhiit1 = Math.tanh(latiso + constantes.GRS80E * Math.atanh(constantes.GRS80E * sinPhiit0));
-      var sinPhiit2 = Math.tanh(latiso + constantes.GRS80E * Math.atanh(constantes.GRS80E * sinPhiit1));
-      var sinPhiit3 = Math.tanh(latiso + constantes.GRS80E * Math.atanh(constantes.GRS80E * sinPhiit2));
-      var sinPhiit4 = Math.tanh(latiso + constantes.GRS80E * Math.atanh(constantes.GRS80E * sinPhiit3));
-      var sinPhiit5 = Math.tanh(latiso + constantes.GRS80E * Math.atanh(constantes.GRS80E * sinPhiit4));
-      var sinPhiit6 = Math.tanh(latiso + constantes.GRS80E * Math.atanh(constantes.GRS80E * sinPhiit5));
-  
-      var longRad = Math.asin(sinPhiit6);
-      var latRad = gamma / constantes.n + constantes.LONG_0 / 180 * Math.PI;
-  
-      var longitude = latRad / Math.PI * 180;
-      var latitude = longRad / Math.PI * 180;
-  
-      return {longitude: longitude, latitude: latitude};
-  }
+<head>
+  <title>Coordinate Conversion</title>
+</head>
+<body>
+  <input type="file" id="csvFileInput" accept=".csv">
+  <button onclick="processCSV()">Convert</button>
+  <div id="output"></div>
 
-       console.log(lambert93toWGPS(813442.81143557,2074524.4944505));
-    </script>
-  </body>
+  <script>
+    // Function to convert coordinates from EPSG:27572 or EPSG:27582 to WGS 84
+    function convertToWGS84(projection, x, y) {
+      // Define the parameters for each projection
+      const epsg27572_params = {
+        lon_0: 3,
+        lat_0: 44,
+        k_0: 0.99987742,
+        x_0: 600000,
+        y_0: 3200000,
+      };
+
+      const epsg27582_params = {
+        lon_0: 3,
+        lat_0: 46.8,
+        k_0: 0.99987742,
+        x_0: 600000,
+        y_0: 3200000,
+      };
+
+      // Select the appropriate parameters based on the projection
+      const params = projection === 'EPSG:27572' ? epsg27572_params : epsg27582_params;
+
+      // Convert Lambert coordinates to geographic (latitude and longitude)
+      const e = 0.08181919104281579; // Eccentricity of WGS 84
+      const a = 6378137; // Semi-major axis of WGS 84
+      const b = a * Math.sqrt(1 - e * e); // Semi-minor axis of WGS 84
+
+      const x0 = params.x_0;
+      const y0 = params.y_0;
+      const k0 = params.k_0;
+      const lon0 = params.lon_0;
+      const lat0 = params.lat_0;
+
+      const xdiff = x - x0;
+      const ydiff = y - y0;
+      const rho = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+      const t = Math.pow(rho / (a * k0), 1 / 3);
+      const chi = Math.asin(ydiff / (a * k0 * t));
+      const lat = lat0 + (1 - t * t + e * e) * Math.sin(2 * chi) + (5 / 4) * (Math.pow(1 - e * e, 2)) * Math.sin(4 * chi) + (81 / 64) * (Math.pow(1 - e * e, 3)) * Math.sin(6 * chi) + (9 / 4) * (Math.pow(1 - e * e, 1.5)) * Math.sin(8 * chi);
+      const lon = lon0 + Math.atan(xdiff / (-ydiff));
+
+      return { lat, lon };
+    }
+
+    // Function to process the CSV file and perform the conversion
+    function processCSV() {
+      const fileInput = document.getElementById('csvFileInput');
+      const outputDiv = document.getElementById('output');
+
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Please select a CSV file.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const content = e.target.result;
+        const rows = content.split('\n');
+
+        // Output CSV header with the new columns
+        const output = 'Nom parcelle;Surface;Cod. farm;Farm Name;Structure;Num_Ilot;Culture;Variete;Nom contrat;WKT;EPSG:27572 To WSG84;EPSG:27582 To WSG84\n';
+
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i].trim();
+          if (row) {
+            const columns = row.split(';');
+            const wkt = columns[columns.length - 1].replace('POLYGON((', '').replace('))', '');
+            if (wkt) {
+              const coordinates = wkt.split(',').map(coord => coord.trim().split(' ').map(parseFloat));
+
+              let convertedCoordinates_27572 = '';
+              let convertedCoordinates_27582 = '';
+
+              for (const [x, y] of coordinates) {
+                const converted_27572 = convertToWGS84('EPSG:27572', x, y);
+                convertedCoordinates_27572 += `${converted_27572.lon} ${converted_27572.lat},`;
+
+                const converted_27582 = convertToWGS84('EPSG:27582', x, y);
+                convertedCoordinates_27582 += `${converted_27582.lon} ${converted_27582.lat},`;
+              }
+
+              // Remove the last comma
+              convertedCoordinates_27572 = convertedCoordinates_27572.slice(0, -1);
+              convertedCoordinates_27582 = convertedCoordinates_27582.slice(0, -1);
+
+              // Append the converted coordinates to the output
+              output += `${row};${convertedCoordinates_27572};${convertedCoordinates_27582}\n`;
+            }
+          }
+        }
+
+        // Display the output CSV on the webpage
+        outputDiv.innerHTML = '<pre>' + output + '</pre>';
+
+        // Optionally, you can save the output as a CSV file
+        const blob = new Blob([output], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'output.csv';
+        link.click();
+      };
+
+      reader.readAsText(file);
+    }
+  </script>
+</body>
 </html>
