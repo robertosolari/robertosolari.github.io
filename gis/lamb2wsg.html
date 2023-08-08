@@ -70,7 +70,7 @@
         const rows = content.split('\n');
 
         // Output CSV header with the new columns
-        const output = 'Cod. farm;WKT;EPSG:27572 To WSG84;EPSG:27582 To WSG84\n';
+        let output = 'Cod. farm;WKT;EPSG:27572 To WSG84;EPSG:27582 To WSG84\n';
 
         for (let i = 1; i < rows.length; i++) {
           const row = rows[i].trim();
