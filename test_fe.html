@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option Selector</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            min-width: 400px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 50px;
+            border-bottom: 3px solid #ccc;
+            position: relative;
+        }
+        .toolbar div {
+            flex: 1;
+            text-align: center;
+            line-height: 50px;
+            cursor: pointer;
+        }
+        .toolbar div.selected {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+        .progress-bar {
+            height: 3px;
+            background: red;
+            width: 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <div id="all" class="selected">All</div>
+        <div id="option1">Opc1</div>
+        <div id="option2">Opc2</div>
+        <div id="option3">Opc3</div>
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="content">
+        Currently selected: <span id="selected-options">&gt; All &lt;</span>
+    </div>
+    <script>
+        $(document).ready(function() {
+            const defaultOptions = ['Opc1', 'Opc2', 'Opc3'];
+            let options = defaultOptions;
+            const hashOptions = window.location.hash.substr(1).split('|');
+            if (hashOptions.length >= 3) {
+                options = hashOptions;
+            }
+            $('.toolbar').empty();
+            $('.toolbar').append('<div id="all" class="selected">All</div>');
+            options.forEach((option, index) => {
+                $('.toolbar').append(`<div id="option${index + 1}">${option}</div>`);
+            });
+            $('.toolbar').append('<div class="progress-bar" id="progress-bar"></div>');
+
+            let selectedOptions = ['all'];
+            let timer;
+            let progressBarWidth = 0;
+
+            function updateContent() {
+                if (selectedOptions.includes('all')) {
+                    $('#selected-options').text('> All <');
+                } else {
+                    $('#selected-options').text('> ' + selectedOptions.map(opt => opt.replace('option', 'Opc')).join(', ') + ' <');
+                }
+            }
+
+            function resetProgressBar() {
+                progressBarWidth = 0;
+                $('#progress-bar').css('width', '0');
+                clearInterval(timer);
+                timer = setInterval(function() {
+                    progressBarWidth += 100 / 30;
+                    $('#progress-bar').css('width', progressBarWidth + '%');
+                    if (progressBarWidth >= 100) {
+                        clearInterval(timer);
+                        updateContent();
+                    }
+                }, 100);
+            }
+
+            $('.toolbar').on('click', 'div', function() {
+                const id = $(this).attr('id');
+                if (id === 'all') {
+                    selectedOptions = ['all'];
+                    $('.toolbar div').removeClass('selected');
+                    $('#all').addClass('selected');
+                } else {
+                    if (selectedOptions.includes('all')) {
+                        selectedOptions = [id];
+                    } else {
+                        const index = selectedOptions.indexOf(id);
+                        if (index > -1) {
+                            selectedOptions.splice(index, 1);
+                        } else {
+                            selectedOptions.push(id);
+                        }
+                        if (selectedOptions.length === 0) {
+                            selectedOptions = ['all'];
+                        }
+                    }
+                    $('.toolbar div').removeClass('selected');
+                    selectedOptions.forEach(opt => {
+                        $(`#${opt}`).addClass('selected');
+                    });
+                }
+                resetProgressBar();
+            });
+
+            resetProgressBar();
+        });
+    </script>
+</body>
+</html>
