@@ -932,3 +932,7 @@ a{
   height: 480px;
   object-fit: cover; 
 }
+.border-primary {
+    border-color: #c0c0c0 !important;
+}
+
